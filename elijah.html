@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--
+    CSS -
+        flex:- auto layout(auto sets up box within the block)
+        padding:- inner gap
+        margin:- outer gap
+        position:- relative- all child element position is set to the parent block
+        |fixed/absolute- it is fixed-stays in place even after scrolling/fixed-moves with other elements on scrolling and works with relative
+        flex-direction
+        transform: move their position
+        # - id(cannot repeat)
+        . - class(can repeat)
+    
+
+    JS -
+        document-html
+        getElementById - returns the respective element
+        value - input field value
+        innerText/innerHTML - set/get inside text/HTML
+        var/let - initialising variable
+
+    HTML -
+        div - box
+        button - button
+        input - input field
+        p - paragraph
+        h - heading
+        b - bold
+        br - break lines
+        onclick - do js functions on clicked
+        i - icon loaded from styles
+  -->
+
+
+
+<!--Importing fonts-->
+<head>
+
+  <link rel="stylesheet" href="https://use.typekit.net/oqa7naa.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+  <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+  <link href="https://fonts.googleapis.com/css?family=Quicksand:300,500" rel="stylesheet">
+
+</head>
+
+<body>
+<!--Menu-->
+  <div id="menu">
+    <h1 style="font-family: 'Poppins', sans-serif;">QUIZE.</h1>
+    <button onclick="go()">PLAY</button>
+    <button onclick="show_instruction()">INSTRUCTION</button>
+    <button onclick="show_leaderboard()">HIGH SCORE</button>
+    <button onclick="show_addq()">ADD A QUESTION</button>
+    <button onclick="show_admin_opt()">ADMIN</button>
+  </div>
+<!--Entering Name-->
+  <div class="loginpage logo" id="loginpg">
+    <i onclick="backbt('loginpg','menu')" style="position:absolute;top:10px;left:10px;z-index:2;"
+      class="fi-rr-angle-left"></i>
+    <h1 style="font-family: 'Poppins', sans-serif;">QUIZE.</h1>
+    <p><b>Pick a Username:</b><br><br></p>
+    <input id="name" placeholder="username"><br><br>
+    <button onclick="play()">Go!</button>
+  </div>
+<!--Admin Options-->
+  <div class="admin_opt" id="admin_opt">
+    <p onclick="backbt('admin_opt','menu')" class="backtxt"><i class="fi-rr-angle-left"></i></p>
+    <button onclick="show_admin_mq()">MANAGE QUESTIONS</button>
+    <button onclick="show_admin_ml()"> MANAGE LEADERBOARD</button>
+
+  </div>
+  <!--Question-->
+  <div class="question" id="questions">
+    <div>
+      <h1 id="question">Question</h1>
+    </div>
+    <div class="options">
+
+      <button id="o1" onclick="select(this.id)">Options</button>
+      <button id="o2" onclick="select(this.id)">Options</button>
+      <button id="o3" onclick="select(this.id)">Options</button>
+      <button id="o4" onclick="select(this.id)">Options</button>
+
+    </div>
+  </div>
+  <!--Game Over-->
+  <div class="gameover" id="gameover">
+    <h1 id="gtxt">GAME OVER</h1>
+    <h5 id="canswerg"></h5>
+    <h3 id="score">Score:0</h3>
+  </div>
+  <!--LeaderBoard-->
+  <div id="lead" class="leaderboard">
+    <p onclick="lback_menu()" class="backtxt"><i class="fi-rr-angle-left"></i></p><br><br>
+    <p style="font-size: 100px;">LEADERBOARD</p>
+    <div id="lcon" class="lcontainer">
+      <li class="lheader">
+        <div>Name</div>
+        <div>Date</div>
+        <div>Score</div>
+      </li>
+    </div>
+  </div>
+  <!--Manage Questions-->
+  <div id="manq" class="manq">
+    <p onclick="backbt('manq','admin_opt')" class="backtxt"><i class="fi-rr-angle-left"></i></p><br><br>
+    <p style="font-size: 100px;">QUESTIONS</p>
+    <input id="qser" oninput="searchq()" placeholder="Search a Question">
+    <div id="mcon" class="lcontainer">
+      <li class="lheader">
+        <div>Q. No.</div>
+        <div>Question</div>
+        <div>Opt. 1</div>
+        <div>Opt. 2</div>
+        <div>Opt. 3</div>
+        <div>Opt. 4</div>
+        <div>Correct</div>
+        <div>ACTION</div>
+      </li>
+      <div id="qincon"></div>
+    </div>
+  </div>
+  <!--Manage Leaderboard-->
+  <div id="manal" class="manal">
+    <p onclick="backbt('manal','admin_opt')" class="backtxtl">
+      <i class="fi-rr-angle-left"></i>
+    </p><br><br>
+    <p style="font-size: 100px;">LEADERBOARD</p>
+    <input id="lser" oninput="searchl()" placeholder="Search By Name">
+    <div id="mcon" class="lmcontainer">
+      <li class="lheader">
+        <div>Name</div>
+        <div>Date</div>
+        <div>Score</div>
+        <div>ACTION</div>
+      </li>
+      <div id="lincon"></div>
+    </div>
+  </div>
+  <!--Add Question-->
+  <div id="adq" class="addq">
+    <p onclick="backbt('adq','menu')" class="backtxt"><i class="fi-rr-angle-left"></i></p>
+    <input id="q" placeholder="Question">
+    <input id="a" placeholder="Option 1">
+    <input id="b" placeholder="Option 2">
+    <input id="c" placeholder="Option 3">
+    <input id="d" placeholder="Option 4">
+    <input id="can" placeholder="Correct Option">
+    <button onclick="addq()">Add question</button>
+    <br><br>
+    <p id="addq-err"></p>
+  </div>
+
+  <!--Instruction-->
+  <div id="inst" class="instructions">
+    <div class="indiv">
+      <p style="font-size: 100px;">INSTRUCTIONS</p>
+      <p class="inp">Answer all the questions present in the game.<br> Try answering all the the questions and you
+        win!!! You get 5 points for each correct answer. So have fun (*^_^*)</p>
+    </div>
+    <button class="inbutton" onclick="back_menu()">OK</button>
+  </div>
+
+  <!--Intro-->
+  <div id="introcont" class="intro-container">
+    <div class="txt-slide">
+      <div class="logo" id="logointro">
+        <div>QUIZE.</div>
+        <p>A project by Elijah and Siddhanth of 12 AM</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+
+    let ca = null
+    let n = null
+    let ct = 'm'
+
+    function backbt(h, f) {
+      document.getElementById(f).style.display = "flex"
+      document.getElementById(h).style.display = 'none'
+    }
+
+    function show_addq() {
+      document.getElementById('adq').style.display = "flex"
+      document.getElementById('menu').style.display = 'none'
+
+    }
+    function show_addqa() {
+
+      document.getElementById('adq').style.display = "flex"
+      document.getElementById('admin_opt').style.display = 'none'
+    }
+    function addq() {
+      ops= [document.getElementById("a").value,
+        document.getElementById("b").value,
+        document.getElementById("c").value,
+        document.getElementById("d").value]
+
+        if(ops.includes(document.getElementById("can").value) === false){
+      document.getElementById("addq-err").innerText="Correct Option Does not match any of the given options"
+
+    }else if(document.getElementById("q").value,
+        document.getElementById("a").value,
+        document.getElementById("b").value,
+        document.getElementById("c").value,
+        document.getElementById("d").value,
+        document.getElementById("can").value !=""){
+        pywebview.api.addaquestion(document.getElementById("q").value,
+          document.getElementById("a").value,
+          document.getElementById("b").value,
+          document.getElementById("c").value,
+          document.getElementById("d").value,
+          document.getElementById("can").value)
+        document.getElementById('adq').style.display = "none"
+        if (ct == 'm') {
+          document.getElementById('menu').style.display = 'flex'
+        } else if (ct == 'a') {
+          document.getElementById('admin_opt').style.display = 'flex'
+
+        }
+    }else{
+      document.getElementById("addq-err").innerText="Please fill all Fields"
+    }
+
+    }
+    function deleteq(qn) {
+      pywebview.api.deletequestion(qn).then(display_manage)
+
+    }
+
+    function deletel(qn) {
+      pywebview.api.deletescore(qn).then(display_managel)
+
+    }
+
+    function lback_menu() {
+
+      document.getElementById('lead').style.display = "none"
+      document.getElementById('menu').style.display = 'flex'
+    }
+    function display_leaderboard(data) {
+      document.getElementById("lcon").insertAdjacentHTML("beforeend", data)
+    }
+
+    function searchq(q) {
+      pywebview.api.searchquestion(document.getElementById("qser").value).then(display_manage)
+
+    }
+    function searchl() {
+      pywebview.api.searchscore(document.getElementById("lser").value).then(display_managel)
+
+    }
+
+    function display_manage(data) {
+      document.getElementById("qincon").innerHTML = data
+    }
+
+    function display_managel(data) {
+      document.getElementById("lincon").innerHTML = data
+    }
+    function show_leaderboard() {
+      pywebview.api.leaderboard().then(display_leaderboard)
+      document.getElementById('lead').style.display = "flex"
+      document.getElementById('menu').style.display = 'none'
+
+    }
+    function back_menu() {
+
+      document.getElementById('inst').style.display = "none"
+      document.getElementById('menu').style.display = 'flex'
+    }
+    function show_instruction() {
+
+      document.getElementById('inst').style.display = "flex"
+      document.getElementById('menu').style.display = 'none'
+
+    }
+    function intro() {
+      setTimeout(() => {
+        pywebview.api.connect()
+        setTimeout(() => {
+          document.getElementById('menu').style.marginTop = '500px'
+          document.getElementById('introcont').style.opacity = '0'
+          setTimeout(() => {
+            document.getElementById('introcont').style.display = 'none'
+            document.getElementById('menu').style.display = 'flex';
+            document.getElementById('menu').style.opacity = '1'
+            document.getElementById('menu').style.marginTop = '0px'
+          }, 500)
+        }, 500)
+
+
+      }, 5000)
+    }
+    intro()
+
+    function go() {
+      document.getElementById('menu').style.marginTop = '500px'
+      document.getElementById('menu').style.opacity = '0'
+      setTimeout(() => {
+        document.getElementById('loginpg').style.marginTop = '500px'
+        setTimeout(() => {
+          document.getElementById('menu').style.display = 'none'
+          document.getElementById('menu').style.opacity = '1'
+          document.getElementById('menu').style.marginTop = '0px'
+          document.getElementById('loginpg').style.display = 'flex';
+          document.getElementById('loginpg').style.marginTop = '0px'
+          document.getElementById('loginpg').style.opacity = '1'
+        }, 500)
+      }, 700)
+
+    }
+    function play() {
+      document.getElementById('loginpg').style.opacity = '0'
+      document.getElementById('loginpg').style.display = 'none'
+      pywebview.api.play(document.getElementById("name").value).then(manage)
+    }
+    function show_admin_mq() {
+
+      document.getElementById('manq').style.display = "flex"
+      document.getElementById('admin_opt').style.display = 'none'
+      pywebview.api.disp_managequestion().then(display_manage)
+    }
+    function show_admin_ml() {
+
+      document.getElementById('manal').style.display = "flex"
+      document.getElementById('admin_opt').style.display = 'none'
+      pywebview.api.disp_managelead().then(display_managel)
+    }
+    function manage(data) {
+      if (data.type === "q") {
+
+        setTimeout(() => {
+          document.getElementById('loginpg').style.display = 'none'
+          document.getElementById('questions').style.display = 'flex';
+          document.getElementById('questions').style.opacity = '1';
+          document.getElementById('questions').style.backgroundColor = data.c;
+          document.getElementById("question").innerText = data.r + ". " + data.q[1]
+          document.getElementById("o1").innerText = data.q[2]
+          document.getElementById("o2").innerText = data.q[3]
+          document.getElementById("o3").innerText = data.q[4]
+          document.getElementById("o4").innerText = data.q[5]
+          ca = data.q[6]
+          n = data.q[0]
+
+
+        }, 500)
+
+      }
+      else if (data.type === "wa") {
+        document.getElementById("questions").style.display = "none"
+        document.getElementById("gameover").style.display = "flex"
+        document.getElementById("gtxt").innerText = "Game Over!"
+        document.getElementById("canswerg").innerText = "The Correct Option was " + ca
+        document.getElementById("score").innerText = "Score: " + data.s
+        setTimeout(() => {
+          document.getElementById("gameover").style.display = "none"
+          document.getElementById('menu').style.display = 'flex';
+          document.getElementById('menu').style.opacity = '1';
+        }, 2000)
+      } else if (data.type === "won") {
+        document.getElementById("questions").style.display = "none"
+        document.getElementById("gameover").style.display = "flex"
+        document.getElementById("gtxt").innerText = "GG!"
+        document.getElementById("canswerg").innerText = "You have completed the quize!"
+        document.getElementById("score").innerText = "Score: " + data.s
+        setTimeout(() => {
+          document.getElementById("gameover").style.display = "none";
+          document.getElementById('menu').style.display = 'flex';
+          document.getElementById('menu').style.opacity = '1';
+        }, 2000)
+      }
+    }
+    function show_admin_opt() {
+      document.getElementById("menu").style.display = "none";
+      document.getElementById("admin_opt").style.display = "flex";
+
+    }
+    function update_q(qn) {
+      pywebview.api.updatequestion(qn,
+        document.getElementById("q-" + qn).innerText,
+        document.getElementById("a-" + qn).innerText,
+        document.getElementById("b-" + qn).innerText,
+        document.getElementById("c-" + qn).innerText,
+        document.getElementById("d-" + qn).innerText,
+        document.getElementById("ca-" + qn).innerText,
+      ).then(display_manage)
+    }
+    function update_l(id) {
+      pywebview.api.updatescore(id, document.getElementById("sc-" + id).innerText).then(display_managel)
+    }
+    function select(o) {
+      console.log(o)
+      if (o === "o1") {
+        o = document.getElementById("o1").innerText
+      }
+
+      else if (o === "o2") {
+        o = document.getElementById("o2").innerText
+      }
+
+      else if (o === "o3") {
+        o = document.getElementById("o3").innerText
+      }
+
+      else if (o === "o4") {
+        o = document.getElementById("o4").innerText
+      }
+      console.log(o)
+      pywebview.api.verify(o, ca, n).then(manage)
+    }
+
+  </script>
+  <style>
+    .addq {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      padding-bottom: 20px;
+      align-items: center;
+      background-color: #181818;
+      text-align: center;
+      color: white;
+
+    }
+
+    .addq input {
+      width: 300px;
+      margin-bottom: 15px;
+    }
+
+    .leaderboard {
+      display: none;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      overflow-y: auto;
+      align-items: center;
+      background-image: linear-gradient(to right, rgb(255 166 37), rgb(255 223 76));
+      text-align: center;
+      color: white;
+    }
+
+    .manq {
+      display: none;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      overflow-y: auto;
+      align-items: center;
+      background-image: linear-gradient(to right, rgb(196, 74, 74), rgb(255, 42, 0));
+      text-align: center;
+      color: white;
+    }
+
+    .manal {
+      display: none;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      overflow-y: auto;
+      align-items: center;
+      background-image: linear-gradient(to right, rgb(106, 53, 156), rgb(181, 137, 214));
+      text-align: center;
+      color: white;
+    }
+
+    ::placeholder {
+      color: white;
+    }
+
+    .manq input {
+      width: 500px;
+      margin-bottom: 50px;
+      border: 1px solid white;
+    }
+
+    .manal input {
+      width: 500px;
+      margin-bottom: 50px;
+      border: 1px solid white;
+    }
+
+    .lcontainer button {
+      width: 65px;
+      border-radius: 500px;
+      color: white;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0);
+      border: 2px solid white;
+      transition: all 0.5s ease-in-out;
+
+    }
+
+    .lcontainer button:hover {
+      background-color: white;
+      color: black;
+    }
+
+    .lmcontainer button {
+      width: 65px;
+      border-radius: 500px;
+      color: white;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0);
+      border: 2px solid white;
+      transition: all 0.5s ease-in-out;
+
+    }
+
+    .lmcontainer button:hover {
+      background-color: white;
+      color: black;
+    }
+
+    #lincon {
+      width: 95%;
+    }
+
+    #qincon {
+      width: 95%;
+    }
+
+    .lcontainer {
+      display: flex;
+      flex-direction: column;
+      width: 95%;
+      align-items: center;
+      text-align: center;
+    }
+
+    .lmcontainer {
+      display: flex;
+      flex-direction: column;
+      width: 95%;
+      align-items: center;
+      text-align: center;
+    }
+
+    .lheader {
+
+      display: flex;
+      flex-direction: row;
+      background-color: white;
+      color: black;
+      width: 100%;
+      height: 70px;
+      padding: 15px;
+      margin-bottom: 50px;
+      border-radius: 10px;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    .lcontainer input {
+      width: 300px;
+
+    }
+
+    .lrow div {
+      flex-basis: auto
+    }
+
+    .lrow {
+
+      display: flex;
+      margin-bottom: 25px;
+      flex-direction: row;
+      background-color: rgba(0, 0, 0, 0);
+      color: white;
+      border: 1px solid white;
+      width: 100%;
+      height: 70px;
+      padding: 15px;
+      border-radius: 10px;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    i,
+    button {
+      cursor: pointer;
+    }
+
+    .instructions {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      background-color: #181818;
+      text-align: center;
+      color: white;
+
+    }
+
+    .indiv,
+    .inp {
+      margin-top: 100px;
+
+    }
+
+    .inbutton {
+      margin-top: 100px;
+      margin-top: 50px;
+      border-radius: 500px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0);
+      border: 2px solid white;
+      transition: all 0.5s ease-in-out;
+    }
+
+    #canswerg {
+      margin-top: 200px;
+    }
+
+    #score {
+      margin-top: 50px;
+    }
+
+    .gameover {
+      width: 100%;
+      height: 100%;
+      background-color: #181818;
+      color: white;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+    }
+
+    .admin_opt {
+      width: 100%;
+      height: 100%;
+      background-color: #181818;
+      color: white;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .admin_opt button {
+      margin-top: 50px;
+      border-radius: 500px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0);
+      border: 2px solid white;
+      transition: all 0.5s ease-in-out;
+      font-family: video, serif;
+      font-weight: 400;
+      font-style: normal;
+
+    }
+
+    :-ms-input-placeholder {
+      color: white;
+    }
+
+    ::-ms-input-placeholder {
+      color: white;
+    }
+
+    .admin_opt button:hover {
+      background-color: white;
+      color: black;
+    }
+
+    #question {
+      margin-bottom: 250px;
+    }
+
+    .options {
+      position: fixed;
+      bottom: 0;
+      margin-bottom: 20px;
+      display: grid;
+      width: 100%;
+      height: 30%;
+      grid-gap: 2px;
+      grid-template-columns: 50% 50%;
+    }
+
+    .options button {
+      font-family: video, serif;
+      font-weight: 300;
+      font-style: normal;
+      width: 99%;
+      font-size: 25px;
+      font-weight: 400;
+      height: 99%;
+      margin: 2px;
+      border-radius: 500px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0);
+      border: 2px solid white;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .options button:hover {
+      background-color: white;
+      color: black;
+    }
+
+    .question {
+      width: 100%;
+      height: 100%;
+      background-color: #181818;
+      color: white;
+      display: none;
+      transition: all 0.5s ease-in-out;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+    }
+
+    .backtxt {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+    }
+
+    .backtxtl {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+    }
+
+    body,
+    html {
+      font-size: 15pt;
+      width: 100%;
+      color: white;
+      height: 100%;
+      overflow: hidden;
+      background-color: #181818;
+      font-family: video, serif;
+      font-weight: 500;
+      font-style: normal;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .intro-container {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      transition: background-image 0.2s ease-in-out;
+      animation-name: lgbt;
+      animation-duration: 5s;
+      display: flex;
+      color: white;
+      justify-content: center;
+      align-items: center;
+      animation-iteration-count: infinite;
+      background-color: white;
+    }
+
+    .txt-slide {
+      width: 100%;
+
+      height: 120px;
+      overflow: hidden;
+      text-align: center;
+
+    }
+
+    .logo {
+      width: 100%;
+      height: 100%;
+      transition: all 0.2s ease-in-out;
+      margin-top: 0px;
+      animation-name: scrolltxt;
+      animation-duration: 5s;
+    }
+
+    .logo div {
+
+      font-family: 'Poppins', sans-serif;
+      font-size: 50px;
+
+    }
+
+    @keyframes scrolltxt {
+      0% {
+        margin-top: 75px;
+      }
+
+      30% {
+        margin-top: 20px;
+      }
+
+      60% {
+        margin-top: 20px;
+      }
+
+      80% {
+        margin-top: 0px;
+      }
+
+      100% {
+        margin-top: 0px;
+      }
+    }
+
+    @keyframes lgbt {
+
+      0% {
+        background-image: linear-gradient(to right, rgb(196, 74, 74), rgb(255, 0, 0));
+      }
+
+      20% {
+        background-image: linear-gradient(to right, rgb(74, 196, 76), rgb(4, 255, 0));
+      }
+
+      40% {
+        background-image: linear-gradient(to right, rgb(74, 119, 196), rgb(0, 115, 255));
+      }
+
+      60% {
+        background-image: linear-gradient(to right, rgb(196, 182, 74), rgb(255, 234, 0));
+      }
+
+      80% {
+        background-image: linear-gradient(to right, rgb(196, 74, 172), rgb(255, 0, 230));
+      }
+
+      100% {
+        background-image: linear-gradient(to right, rgb(196, 74, 74), rgb(255, 0, 0));
+      }
+
+
+    }
+
+    .loginpage {
+      background-color: #181818;
+      color: white;
+      position: absolute;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      z-index: 1;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .loginpage p {
+      color: #CCCCCC;
+      margin-top: 150px;
+      margin-left: -60px;
+    }
+
+    input {
+
+      color: white;
+      border: 1px solid #535353;
+      border-radius: 5px;
+      padding: 15px;
+      font-family: video, serif;
+      font-weight: 200;
+      font-style: normal;
+
+      border-bottom: 1px solid white;
+      background-color: rgba(0, 0, 0, 0)
+    }
+
+    .loginpage input {
+
+      color: white;
+      border: 1px solid #535353;
+      border-radius: 5px;
+      padding: 15px;
+
+      border-bottom: 1px solid white;
+      background-color: rgba(0, 0, 0, 0)
+    }
+
+    button {
+      border-radius: 5px;
+      padding: 15px;
+      color: black;
+      border: none;
+      cursor: pointer;
+      width: 250px;
+      background-color: white;
+
+    }
+
+    #menu {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      transition: all 1s ease-in-out;
+      width: 100%;
+      margin-top: 500px;
+      height: 100%;
+      flex-direction: column;
+      background-color: #181818;
+    }
+
+    #menu button {
+      margin-top: 50px;
+      border-radius: 500px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0);
+      border: 2px solid white;
+      transition: all 0.5s ease-in-out;
+      font-family: video, serif;
+      font-weight: 400;
+      font-style: normal;
+
+    }
+
+    #menu button:hover {
+      background-color: white;
+      color: black;
+    }
+  </style>
+
+</html>
